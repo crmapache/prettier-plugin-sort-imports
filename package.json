@@ -1,0 +1,39 @@
+{
+  "name": "prettier-plugin-sort-react-imports",
+  "version": "0.1.0",
+  "description": "A prettier plugins for sorting and grouping your imports in react apps",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "ts-node src/index.ts"
+  },
+  "keywords": [
+    "prettier",
+    "plugin",
+    "sort",
+    "import",
+    "react",
+    "next",
+    "typescript",
+    "javascript"
+  ],
+  "author": {
+    "name": "Maksim Zolotoi",
+    "email": "crmapache@icloud.com",
+    "url": "https://github.com/crmapache"
+  },
+  "repository": {
+    "url": "https://github.com/crmapache/prettier-plugin-sort-next-imports",
+    "type": "git"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/parser": "^7.22.4",
+    "@babel/plugin-syntax-jsx": "^7.21.4",
+    "@babel/traverse": "^7.22.4",
+    "prettier": "2.8.8",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.3"
+  }
+}
