@@ -1,6 +1,3 @@
-export type Config = {
-    extractor: (code: string) => Import[];
-};
 export type Import = string;
 export type ImportData = {
     raw: string;

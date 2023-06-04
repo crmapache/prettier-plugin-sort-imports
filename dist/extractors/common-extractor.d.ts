@@ -1,2 +1,1 @@
-import { Config } from '../types';
-export declare const commonExtractor: Config['extractor'];
+export declare const commonExtractor: (code: string) => RegExpMatchArray;

@@ -9,8 +9,6 @@ var preprocess = function (code) {
     var importGroups = (0, utils_1.splitImportsIntoGroups)(imports);
     var sortedImportGroups = (0, utils_1.sortImportGroups)(importGroups);
     var preparedCode = (0, utils_1.prepareCode)(sortedImportGroups);
-    var result = (0, replace_imports_1.replaceImports)(preparedCode, code);
-    // return code
-    return result;
+    return (0, replace_imports_1.replaceImports)(preparedCode, code);
 };
 exports.preprocess = preprocess;
