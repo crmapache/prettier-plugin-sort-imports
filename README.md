@@ -1,4 +1,4 @@
-# Prettier plugin sort next imports
+# Prettier plugin sort react imports
 
 A prettier plugins for sorting and grouping your imports in react apps.
 
