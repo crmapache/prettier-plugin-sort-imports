@@ -56,13 +56,13 @@ import { TabBarProps, TabBarTabIndex } from './TabBar.types'
 ### Install
 
 ```shell script
-npm install --save-dev prettier-plugin-sort-next-imports
+npm install --save-dev prettier-plugin-sort-react-imports
 ```
 
 or, using yarn
 
 ```shell script
-yarn add --dev prettier-plugin-sort-next-imports
+yarn add --dev prettier-plugin-sort-react-imports
 ```
 
 ### Usage
@@ -70,6 +70,6 @@ Add plugin in prettier config file.
 
 ```ecmascript 6
 module.exports = {
-  "plugins": ["prettier-plugin-sort-next-imports"]
+  "plugins": ["prettier-plugin-sort-react-imports"]
 }
 ```
