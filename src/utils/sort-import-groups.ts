@@ -28,7 +28,7 @@ const desc = (a, b) => {
 }
 
 const sortLibraries = (imports: ImportData[]) => {
-  let result = []
+  let result: ImportData[] = []
   const groups = {}
 
   for (const library of libraries) {
@@ -58,12 +58,16 @@ const sortLibraries = (imports: ImportData[]) => {
 
   result = [...result, ...imports]
 
-  return result
+  return destructuringSort(result)
 }
 
-const sortAliases = (imports) => imports.sort(asc)
+const sortAliases = (imports: ImportData[]) => {
+  const sortedImports = imports.sort(asc)
 
-const sortRelatives = (imports) => {
+  return destructuringSort(sortedImports)
+}
+
+const sortRelatives = (imports: ImportData[]) => {
   const outFolderImports = []
   const currentFolderImports = []
 
@@ -78,7 +82,39 @@ const sortRelatives = (imports) => {
   outFolderImports.sort(desc)
   currentFolderImports.sort(desc)
 
-  return outFolderImports.concat(currentFolderImports)
+  return destructuringSort(outFolderImports.concat(currentFolderImports))
+}
+
+const destructuringSort = (imports: ImportData[]) => {
+  const result = []
+
+  for (const importData of imports) {
+    const searchResult = importData.raw.match(/\{[\s\S]+?}/gm)
+
+    if (searchResult) {
+      const importElementsString = searchResult[0].replace(/[{}]/gm, '')
+      const importElements = importElementsString.split(',')
+
+      importElements.sort(function (a, b) {
+        if (a.length === b.length) {
+          return a.localeCompare(b)
+        } else {
+          return a.length - b.length
+        }
+      })
+
+      result.push({
+        raw: importData.raw
+          .replace(/\{[\s\S]+?}/gm, `{ ${importElements.join(',')} }`)
+          .replace(/,\n/, ''),
+        path: importData.path,
+      })
+    } else {
+      result.push(importData)
+    }
+  }
+
+  return result
 }
 
 export const sortImportGroups = (inputGroups: ImportGroups) => {

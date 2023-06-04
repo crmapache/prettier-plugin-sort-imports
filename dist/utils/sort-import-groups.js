@@ -58,9 +58,12 @@ var sortLibraries = function (imports) {
     }
     imports.sort(asc);
     result = __spreadArray(__spreadArray([], result, true), imports, true);
-    return result;
+    return destructuringSort(result);
 };
-var sortAliases = function (imports) { return imports.sort(asc); };
+var sortAliases = function (imports) {
+    var sortedImports = imports.sort(asc);
+    return destructuringSort(sortedImports);
+};
 var sortRelatives = function (imports) {
     var outFolderImports = [];
     var currentFolderImports = [];
@@ -75,7 +78,36 @@ var sortRelatives = function (imports) {
     }
     outFolderImports.sort(desc);
     currentFolderImports.sort(desc);
-    return outFolderImports.concat(currentFolderImports);
+    return destructuringSort(outFolderImports.concat(currentFolderImports));
+};
+var destructuringSort = function (imports) {
+    var result = [];
+    for (var _i = 0, imports_2 = imports; _i < imports_2.length; _i++) {
+        var importData = imports_2[_i];
+        var searchResult = importData.raw.match(/\{[\s\S]+?}/gm);
+        if (searchResult) {
+            var importElementsString = searchResult[0].replace(/[{}]/gm, '');
+            var importElements = importElementsString.split(',');
+            importElements.sort(function (a, b) {
+                if (a.length === b.length) {
+                    return a.localeCompare(b);
+                }
+                else {
+                    return a.length - b.length;
+                }
+            });
+            result.push({
+                raw: importData.raw
+                    .replace(/\{[\s\S]+?}/gm, "{ ".concat(importElements.join(','), " }"))
+                    .replace(/,\n/, ''),
+                path: importData.path,
+            });
+        }
+        else {
+            result.push(importData);
+        }
+    }
+    return result;
 };
 var sortImportGroups = function (inputGroups) {
     return {
