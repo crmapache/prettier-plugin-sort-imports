@@ -1,12 +1,11 @@
 {
   "name": "prettier-plugin-sort-react-imports",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A prettier plugins for sorting and grouping your imports in react apps",
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch",
-    "start": "ts-node src/index.ts"
+    "dev": "tsc --watch"
   },
   "keywords": [
     "prettier",
