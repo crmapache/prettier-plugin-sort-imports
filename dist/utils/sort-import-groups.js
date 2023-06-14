@@ -8,10 +8,13 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sortImportGroups = void 0;
+var config_1 = __importDefault(require("../config"));
 var types_1 = require("../types");
-var constants_1 = require("../constants");
 var getImportDepth = function (path) {
     return path.split('/').length;
 };
@@ -38,14 +41,14 @@ var desc = function (a, b) {
 var sortLibraries = function (imports) {
     var result = [];
     var groups = {};
-    for (var _i = 0, libraries_1 = constants_1.libraries; _i < libraries_1.length; _i++) {
-        var library = libraries_1[_i];
+    for (var _i = 0, _a = config_1.default.libs; _i < _a.length; _i++) {
+        var library = _a[_i];
         groups[library.name] = [];
         for (var i = 0; i < imports.length; i++) {
             var importData = imports[i];
-            if ((library.rule === types_1.LIBRARY_RULE.EXACT && importData.path === library.name) ||
-                (library.rule === types_1.LIBRARY_RULE.STARTS && importData.path.startsWith(library.name)) ||
-                (library.rule === types_1.LIBRARY_RULE.INCLUDES && importData.path.includes(library.name))) {
+            if ((library.rule === types_1.LibraryRule.EXACT && importData.path === library.name) ||
+                (library.rule === types_1.LibraryRule.STARTS && importData.path.startsWith(library.name)) ||
+                (library.rule === types_1.LibraryRule.INCLUDES && importData.path.includes(library.name))) {
                 groups[library.name].push(importData);
                 imports.splice(i, 1);
                 i--;
@@ -86,8 +89,10 @@ var destructuringSort = function (imports) {
         var importData = imports_2[_i];
         var searchResult = importData.raw.match(/\{[\s\S]+?}/gm);
         if (searchResult) {
-            var importElementsString = searchResult[0].replace(/[{}]/gm, '');
-            var importElements = importElementsString.split(',');
+            var importElementsString = searchResult[0].replace(/[{}\s]/gm, '');
+            var importElements = importElementsString
+                .split(',')
+                .filter(function (importElement) { return importElement; });
             importElements.sort(function (a, b) {
                 if (a.length === b.length) {
                     return a.localeCompare(b);
@@ -97,9 +102,7 @@ var destructuringSort = function (imports) {
                 }
             });
             result.push({
-                raw: importData.raw
-                    .replace(/\{[\s\S]+?}/gm, "{ ".concat(importElements.join(','), " }"))
-                    .replace(/,\n/, ''),
+                raw: importData.raw.replace(/\{[\s\S]+?}/gm, "{ ".concat(importElements.join(','), " }")),
                 path: importData.path,
             });
         }

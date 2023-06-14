@@ -88,3 +88,43 @@ module.exports = {
   "plugins": ["prettier-plugin-sort-react-imports"]
 }
 ```
+
+### Configuration
+
+Place a file called ```sort-plugin.config.js``` in the root of your project
+
+You can set the import priority order of some libraries, as well as specify directly which aliases you use in the project.
+
+If you do not specify the aliases that you use in the project, then all imports that start with ```@``` will automatically be placed in the group of imports with aliases.
+
+```ecmascript 6
+module.exports = {
+  libs: [
+    {
+      name: 'somelib1',
+      rule: 'exact',
+    },
+    {
+      name: 'somelib2',
+      rule: 'starts',
+    },
+    {
+      name: 'somelib3',
+      rule: 'includes',
+    },
+    ...
+  ],
+  aliases: [
+    'components',
+    'shared',
+    'features',
+    ...
+  ],
+}
+```
+
+Rules available for searching the name of the library in the import:
+
+**exact**- exact match of library name with import  
+**starts** - library name match with start of import  
+**includes** - import includes the name of the library no matter where

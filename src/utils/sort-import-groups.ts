@@ -1,5 +1,5 @@
-import { ImportData, ImportGroups, LIBRARY_RULE } from '../types'
-import { libraries } from '../constants'
+import config from '../config'
+import { ImportData, ImportGroups, LibraryRule } from '../types'
 
 const getImportDepth = (path: string) => {
   return path.split('/').length
@@ -31,16 +31,16 @@ const sortLibraries = (imports: ImportData[]) => {
   let result: ImportData[] = []
   const groups = {}
 
-  for (const library of libraries) {
+  for (const library of config.libs) {
     groups[library.name] = []
 
     for (let i = 0; i < imports.length; i++) {
       const importData = imports[i]
 
       if (
-        (library.rule === LIBRARY_RULE.EXACT && importData.path === library.name) ||
-        (library.rule === LIBRARY_RULE.STARTS && importData.path.startsWith(library.name)) ||
-        (library.rule === LIBRARY_RULE.INCLUDES && importData.path.includes(library.name))
+        (library.rule === LibraryRule.EXACT && importData.path === library.name) ||
+        (library.rule === LibraryRule.STARTS && importData.path.startsWith(library.name)) ||
+        (library.rule === LibraryRule.INCLUDES && importData.path.includes(library.name))
       ) {
         groups[library.name].push(importData)
         imports.splice(i, 1)
@@ -92,8 +92,11 @@ const destructuringSort = (imports: ImportData[]) => {
     const searchResult = importData.raw.match(/\{[\s\S]+?}/gm)
 
     if (searchResult) {
-      const importElementsString = searchResult[0].replace(/[{}]/gm, '')
-      const importElements = importElementsString.split(',')
+      const importElementsString = searchResult[0].replace(/[{}\s]/gm, '')
+
+      const importElements = importElementsString
+        .split(',')
+        .filter((importElement) => importElement)
 
       importElements.sort(function (a, b) {
         if (a.length === b.length) {
@@ -104,9 +107,7 @@ const destructuringSort = (imports: ImportData[]) => {
       })
 
       result.push({
-        raw: importData.raw
-          .replace(/\{[\s\S]+?}/gm, `{ ${importElements.join(',')} }`)
-          .replace(/,\n/, ''),
+        raw: importData.raw.replace(/\{[\s\S]+?}/gm, `{ ${importElements.join(',')} }`),
         path: importData.path,
       })
     } else {

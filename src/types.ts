@@ -9,8 +9,20 @@ export type ImportGroup = 'libraries' | 'aliases' | 'relatives' | 'directRelativ
 
 export type ImportGroups = Record<ImportGroup, ImportData[]>
 
-export enum LIBRARY_RULE {
+export type LibraryRuleName = 'exact' | 'starts' | 'includes'
+
+export enum LibraryRule {
   'EXACT' = 'exact',
   'STARTS' = 'starts',
   'INCLUDES' = 'includes',
+}
+
+export type LibraryConfig = {
+  name: string
+  rule: LibraryRuleName
+}
+
+export type Config = {
+  libs?: LibraryConfig[]
+  aliases?: string[]
 }

@@ -1,4 +1,5 @@
-import { Import, ImportData, ImportGroups } from '../types'
+import config from '../config'
+import { Config, Import, ImportData, ImportGroups } from '../types'
 
 const extractImportPath = (importString: string): string => {
   const matches = importString.match(/from.+/)
@@ -10,16 +11,30 @@ const extractImportPath = (importString: string): string => {
   return importString.replace(/['"]/gm, '').replace('import', '').trim()
 }
 
+const matchToUserAlias = (importSource: string, aliases: Config['aliases']) => {
+  for (const alias of aliases) {
+    if (importSource.startsWith(`@${alias}`)) {
+      return true
+    }
+  }
+
+  return false
+}
+
 export const splitImportsIntoGroups = (imports: Import[]): ImportGroups => {
   const libraries: ImportData[] = []
   const aliases: ImportData[] = []
   const relatives: ImportData[] = []
   const directRelatives: ImportData[] = []
+  const userAliases = config.aliases
 
   for (const importString of imports) {
     const importSource = extractImportPath(importString)
 
-    if (importSource.startsWith('@')) {
+    if (
+      (userAliases.length < 1 && importSource.startsWith('@')) ||
+      matchToUserAlias(importSource, userAliases)
+    ) {
       aliases.push({ raw: importString, path: importSource })
     } else if (importSource.startsWith('.') && importString.includes('from')) {
       relatives.push({ raw: importString, path: importSource })
