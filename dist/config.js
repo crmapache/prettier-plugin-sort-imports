@@ -14,7 +14,7 @@ var config = {
     aliases: [],
 };
 try {
-    var userConfig = require('../../sort-plugin.config.js');
+    var userConfig = require('../../../sort-plugin.config.js');
     if (userConfig.libs) {
         config.libs = userConfig.libs;
     }
