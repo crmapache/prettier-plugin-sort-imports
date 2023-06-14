@@ -15,7 +15,7 @@ const config: Config = {
 }
 
 try {
-  const userConfig: Config = require('../../sort-plugin.config.js')
+  const userConfig: Config = require('../../../sort-plugin.config.js')
 
   if (userConfig.libs) {
     config.libs = userConfig.libs

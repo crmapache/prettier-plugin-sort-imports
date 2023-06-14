@@ -71,13 +71,13 @@ import './styles.scss'
 ### Install
 
 ```shell script
-npm install --save-dev prettier-plugin-sort-react-imports
+npm install -D prettier-plugin-sort-react-imports
 ```
 
 or, using yarn
 
 ```shell script
-yarn add --dev prettier-plugin-sort-react-imports
+yarn add -D prettier-plugin-sort-react-imports
 ```
 
 ### Usage
