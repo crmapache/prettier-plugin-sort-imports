@@ -21,6 +21,9 @@ var matchToUserAlias = function (importSource, aliases) {
     }
     return false;
 };
+var isDireactAliasImport = function (importSource, importString) {
+    return importSource.startsWith('@') && !importString.includes('from');
+};
 var splitImportsIntoGroups = function (imports) {
     var libraries = [];
     var aliases = [];
@@ -30,14 +33,15 @@ var splitImportsIntoGroups = function (imports) {
     for (var _i = 0, imports_1 = imports; _i < imports_1.length; _i++) {
         var importString = imports_1[_i];
         var importSource = extractImportPath(importString);
-        if ((userAliases.length < 1 && importSource.startsWith('@')) ||
-            matchToUserAlias(importSource, userAliases)) {
+        if (((userAliases.length < 1 && importSource.startsWith('@')) ||
+            matchToUserAlias(importSource, userAliases)) &&
+            !isDireactAliasImport(importSource, importString)) {
             aliases.push({ raw: importString, path: importSource });
         }
         else if (importSource.startsWith('.') && importString.includes('from')) {
             relatives.push({ raw: importString, path: importSource });
         }
-        else if (importSource.startsWith('.')) {
+        else if (importSource.startsWith('.') || isDireactAliasImport(importSource, importString)) {
             directRelatives.push({ raw: importString, path: importSource });
         }
         else {

@@ -21,6 +21,10 @@ const matchToUserAlias = (importSource: string, aliases: Config['aliases']) => {
   return false
 }
 
+const isDireactAliasImport = (importSource: string, importString: string) => {
+  return importSource.startsWith('@') && !importString.includes('from')
+}
+
 export const splitImportsIntoGroups = (imports: Import[]): ImportGroups => {
   const libraries: ImportData[] = []
   const aliases: ImportData[] = []
@@ -32,13 +36,14 @@ export const splitImportsIntoGroups = (imports: Import[]): ImportGroups => {
     const importSource = extractImportPath(importString)
 
     if (
-      (userAliases.length < 1 && importSource.startsWith('@')) ||
-      matchToUserAlias(importSource, userAliases)
+      ((userAliases.length < 1 && importSource.startsWith('@')) ||
+        matchToUserAlias(importSource, userAliases)) &&
+      !isDireactAliasImport(importSource, importString)
     ) {
       aliases.push({ raw: importString, path: importSource })
     } else if (importSource.startsWith('.') && importString.includes('from')) {
       relatives.push({ raw: importString, path: importSource })
-    } else if (importSource.startsWith('.')) {
+    } else if (importSource.startsWith('.') || isDireactAliasImport(importSource, importString)) {
       directRelatives.push({ raw: importString, path: importSource })
     } else {
       libraries.push({ raw: importString, path: importSource })
