@@ -53,7 +53,7 @@ export const splitImportsIntoGroups = (imports: Import[]): ImportGroups => {
   const relatives: ImportData[] = []
   const directRelatives: ImportData[] = []
   const userAliases = getUserAliases()
-  console.log(' userAliases >>', userAliases)
+
   for (const importString of imports) {
     const importSource = extractImportPath(importString)
 
