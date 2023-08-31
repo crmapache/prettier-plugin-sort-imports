@@ -12,6 +12,7 @@ var config = {
         },
     ],
     aliases: [],
+    getAliasesFromTsConfig: true,
 };
 try {
     var userConfig = require('../../../sort-plugin.config.js');

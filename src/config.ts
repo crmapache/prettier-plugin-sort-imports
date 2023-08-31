@@ -12,6 +12,7 @@ const config: Config = {
     },
   ],
   aliases: [],
+  getAliasesFromTsConfig: true,
 }
 
 try {

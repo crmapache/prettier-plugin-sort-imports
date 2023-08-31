@@ -25,4 +25,5 @@ export type LibraryConfig = {
 export type Config = {
   libs?: LibraryConfig[]
   aliases?: string[]
+  getAliasesFromTsConfig?: boolean
 }

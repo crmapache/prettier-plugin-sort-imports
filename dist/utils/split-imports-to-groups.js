@@ -1,4 +1,13 @@
 "use strict";
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -24,12 +33,32 @@ var matchToUserAlias = function (importSource, aliases) {
 var isDireactAliasImport = function (importSource, importString) {
     return importSource.startsWith('@') && !importString.includes('from');
 };
+var getUserAliases = function () {
+    var userAliases = config_1.default.aliases;
+    if (config_1.default.getAliasesFromTsConfig) {
+        try {
+            var tsConfig = require('../../../../tsconfig.json');
+            var paths = tsConfig.compilerOptions.paths;
+            if (paths) {
+                return Object.keys(paths).reduce(function (result, el) {
+                    var alias = el.replace(/^@|\/\*$/g, '');
+                    if (result.includes(alias))
+                        return result;
+                    return __spreadArray(__spreadArray([], result, true), [alias], false);
+                }, userAliases);
+            }
+        }
+        catch (e) { }
+    }
+    return config_1.default.aliases;
+};
 var splitImportsIntoGroups = function (imports) {
     var libraries = [];
     var aliases = [];
     var relatives = [];
     var directRelatives = [];
-    var userAliases = config_1.default.aliases;
+    var userAliases = getUserAliases();
+    console.log(' userAliases >>', userAliases);
     for (var _i = 0, imports_1 = imports; _i < imports_1.length; _i++) {
         var importString = imports_1[_i];
         var importSource = extractImportPath(importString);

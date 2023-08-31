@@ -25,13 +25,35 @@ const isDireactAliasImport = (importSource: string, importString: string) => {
   return importSource.startsWith('@') && !importString.includes('from')
 }
 
+const getUserAliases = () => {
+  const userAliases = config.aliases
+
+  if (config.getAliasesFromTsConfig) {
+    try {
+      const tsConfig = require('../../../../tsconfig.json')
+      const paths = tsConfig.compilerOptions.paths
+
+      if (paths) {
+        return Object.keys(paths).reduce((result, el) => {
+          const alias = el.replace(/^@|\/\*$/g, '')
+
+          if (result.includes(alias)) return result
+          return [...result, alias]
+        }, userAliases)
+      }
+    } catch (e) {}
+  }
+
+  return config.aliases
+}
+
 export const splitImportsIntoGroups = (imports: Import[]): ImportGroups => {
   const libraries: ImportData[] = []
   const aliases: ImportData[] = []
   const relatives: ImportData[] = []
   const directRelatives: ImportData[] = []
-  const userAliases = config.aliases
-
+  const userAliases = getUserAliases()
+  console.log(' userAliases >>', userAliases)
   for (const importString of imports) {
     const importSource = extractImportPath(importString)
 
