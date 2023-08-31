@@ -97,6 +97,8 @@ You can set the import priority order of some libraries, as well as specify dire
 
 If you do not specify the aliases that you use in the project, then all imports that start with ```@``` will automatically be placed in the group of imports with aliases.
 
+Also, by default, the plugin will try to load alases from tsconfig compilerOptions.paths
+
 ```ecmascript 6
 module.exports = {
   libs: [
@@ -120,6 +122,7 @@ module.exports = {
     'features',
     ...
   ],
+  getAliasesFromTsConfig: true
 }
 ```
 
