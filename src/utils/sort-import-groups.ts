@@ -92,10 +92,11 @@ const destructuringSort = (imports: ImportData[]) => {
     const searchResult = importData.raw.match(/\{[\s\S]+?}/gm)
 
     if (searchResult) {
-      const importElementsString = searchResult[0].replace(/[{}\s]/gm, '')
+      const importElementsString = searchResult[0].replace(/[{}]/gm, '')
 
       const importElements = importElementsString
         .split(',')
+        .map((importElement) => importElement.trim())
         .filter((importElement) => importElement)
 
       importElements.sort(function (a, b) {

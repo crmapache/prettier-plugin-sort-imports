@@ -1,6 +1,6 @@
 import { ImportGroups } from '../types'
 
-export const prepareCode = (importGroups: ImportGroups) => {
+export const prepareImports = (importGroups: ImportGroups) => {
   let result = ''
 
   for (const importData of importGroups.libraries) {

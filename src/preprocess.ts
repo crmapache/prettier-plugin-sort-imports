@@ -1,13 +1,25 @@
-import { prepareCode, sortImportGroups, splitImportsIntoGroups } from './utils'
+import {
+  prepareImports,
+  sortImportGroups,
+  splitImports,
+  splitImportsIntoGroups,
+  prepareFinalCode,
+} from './utils'
 import { ImportGroups } from './types'
 import { commonExtractor } from './extractors'
-import { replaceImports } from './utils/replace-imports'
 
 export const preprocess = (code: string) => {
-  const imports = commonExtractor(code)
-  const importGroups: ImportGroups = splitImportsIntoGroups(imports)
-  const sortedImportGroups = sortImportGroups(importGroups)
-  const preparedCode = prepareCode(sortedImportGroups)
+  const { rawImports, codeWithoutImports } = commonExtractor(code)
 
-  return replaceImports(preparedCode, code)
+  if (rawImports) {
+    const { preImportsData, imports } = splitImports(rawImports)
+
+    const importGroups: ImportGroups = splitImportsIntoGroups(imports)
+    const sortedImportGroups = sortImportGroups(importGroups)
+    const preparedImports = prepareImports(sortedImportGroups)
+
+    return prepareFinalCode(preImportsData, preparedImports, codeWithoutImports)
+  }
+
+  return code
 }

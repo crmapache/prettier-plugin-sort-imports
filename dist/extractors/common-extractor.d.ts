@@ -1,1 +1,4 @@
-export declare const commonExtractor: (code: string) => RegExpMatchArray | [];
+export declare const commonExtractor: (code: string) => {
+    rawImports: string;
+    codeWithoutImports: string;
+};

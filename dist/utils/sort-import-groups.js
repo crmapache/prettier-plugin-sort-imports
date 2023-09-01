@@ -89,9 +89,10 @@ var destructuringSort = function (imports) {
         var importData = imports_2[_i];
         var searchResult = importData.raw.match(/\{[\s\S]+?}/gm);
         if (searchResult) {
-            var importElementsString = searchResult[0].replace(/[{}\s]/gm, '');
+            var importElementsString = searchResult[0].replace(/[{}]/gm, '');
             var importElements = importElementsString
                 .split(',')
+                .map(function (importElement) { return importElement.trim(); })
                 .filter(function (importElement) { return importElement; });
             importElements.sort(function (a, b) {
                 if (a.length === b.length) {

@@ -58,7 +58,6 @@ var splitImportsIntoGroups = function (imports) {
     var relatives = [];
     var directRelatives = [];
     var userAliases = getUserAliases();
-    console.log(' userAliases >>', userAliases);
     for (var _i = 0, imports_1 = imports; _i < imports_1.length; _i++) {
         var importString = imports_1[_i];
         var importSource = extractImportPath(importString);
