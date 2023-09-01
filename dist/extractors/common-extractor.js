@@ -2,11 +2,17 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commonExtractor = void 0;
 var commonExtractor = function (code) {
-    var regExp = /^[\s\S]+import[\s\S]+?['"`].+/gm;
-    var match = code.match(regExp);
+    var regExpCheck = /^(?!\/\/|\/\*).*import[\s\S]+?['"`].+/gm;
+    var regExpSelect = /^[\s\S]+import[\s\S]+?['"`].+/gm;
+    var match = null;
+    var codeWithoutImports = code;
+    if (regExpCheck.test(code)) {
+        match = code.match(regExpSelect);
+        codeWithoutImports = code.replace(regExpSelect, '');
+    }
     return {
         rawImports: match && match[0],
-        codeWithoutImports: code.replace(regExp, ''),
+        codeWithoutImports: codeWithoutImports,
     };
 };
 exports.commonExtractor = commonExtractor;

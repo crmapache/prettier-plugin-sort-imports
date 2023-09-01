@@ -1,10 +1,17 @@
 export const commonExtractor = (code: string) => {
-  const regExp = /^[\s\S]+import[\s\S]+?['"`].+/gm
+  const regExpCheck = /^(?!\/\/|\/\*).*import[\s\S]+?['"`].+/gm
+  const regExpSelect = /^[\s\S]+import[\s\S]+?['"`].+/gm
 
-  const match = code.match(regExp)
+  let match = null
+  let codeWithoutImports = code
+
+  if (regExpCheck.test(code)) {
+    match = code.match(regExpSelect)
+    codeWithoutImports = code.replace(regExpSelect, '')
+  }
 
   return {
     rawImports: match && match[0],
-    codeWithoutImports: code.replace(regExp, ''),
+    codeWithoutImports,
   }
 }
