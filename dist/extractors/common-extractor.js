@@ -6,7 +6,7 @@ var commonExtractor = function (code) {
     var regExpSelect = /^[\s\S]+import[\s\S]+?['"`].+/gm;
     var match = null;
     var codeWithoutImports = code;
-    if (regExpCheck.test(code)) {
+    if (regExpCheck.test(code) && !code.includes('@imports-sort-ignore')) {
         match = code.match(regExpSelect);
         codeWithoutImports = code.replace(regExpSelect, '');
     }

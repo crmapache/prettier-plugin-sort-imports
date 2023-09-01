@@ -89,6 +89,13 @@ module.exports = {
 }
 ```
 
+### Ignore
+In some special cases, the plugin may be doing something wrong, so you can
+turn it off in a specific file by leaving a comment
+```
+// @imports-sort-ignore
+```
+
 ### Configuration
 
 Place a file called ```sort-plugin.config.js``` in the root of your project

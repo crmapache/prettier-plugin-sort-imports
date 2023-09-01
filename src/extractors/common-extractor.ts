@@ -5,7 +5,7 @@ export const commonExtractor = (code: string) => {
   let match = null
   let codeWithoutImports = code
 
-  if (regExpCheck.test(code)) {
+  if (regExpCheck.test(code) && !code.includes('@imports-sort-ignore')) {
     match = code.match(regExpSelect)
     codeWithoutImports = code.replace(regExpSelect, '')
   }
