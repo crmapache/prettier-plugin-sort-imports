@@ -1,4 +1,4 @@
 export declare const commonExtractor: (code: string) => {
-    rawImports: any;
+    rawImports: string;
     codeWithoutImports: string;
 };
