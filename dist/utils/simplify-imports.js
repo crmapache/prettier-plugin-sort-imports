@@ -5,7 +5,7 @@ const extract_import_path_1 = require("./extract-import-path");
 const simplifyImports = (imports, userAliases, filepath) => {
     const result = [];
     const rootFolderPath = process.cwd();
-    const targetFileFolderPath = `${rootFolderPath}/${filepath.replace(/\/([^/]+)$/, '')}`;
+    const targetFileFolderPath = `${rootFolderPath}/${filepath.replace(/\/([^/]+)$/, '').replace(/.+src/, 'src')}`;
     for (const rawImport of imports) {
         const importPath = (0, extract_import_path_1.extractImportPath)(rawImport).replace(/;$/, '');
         if (importPath.startsWith('@')) {

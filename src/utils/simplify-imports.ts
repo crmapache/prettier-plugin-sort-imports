@@ -4,7 +4,7 @@ import { extractImportPath } from './extract-import-path'
 export const simplifyImports = (imports: string[], userAliases: UserAlias[], filepath: string) => {
   const result = []
   const rootFolderPath = process.cwd()
-  const targetFileFolderPath = `${rootFolderPath}/${filepath.replace(/\/([^/]+)$/, '')}`
+  const targetFileFolderPath = `${rootFolderPath}/${filepath.replace(/\/([^/]+)$/, '').replace(/.+src/, 'src')}`
 
   for (const rawImport of imports) {
     const importPath = extractImportPath(rawImport).replace(/;$/, '')
