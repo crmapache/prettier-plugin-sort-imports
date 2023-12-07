@@ -7,10 +7,10 @@ const simplifyImports = (imports, userAliases, filepath) => {
     const rootFolderPath = process.cwd();
     const targetFileFolderPath = `${rootFolderPath}/${filepath.replace(/\/([^/]+)$/, '')}`;
     for (const rawImport of imports) {
-        const importPath = (0, extract_import_path_1.extractImportPath)(rawImport);
+        const importPath = (0, extract_import_path_1.extractImportPath)(rawImport).replace(/;$/, '');
         if (importPath.startsWith('@')) {
             const clearedPath = importPath.replace(/^@|\/.+$/g, '');
-            const userAliase = userAliases.find(userAliase => userAliase.name === clearedPath);
+            const userAliase = userAliases.find((userAliase) => userAliase.name === clearedPath);
             if (userAliase) {
                 let preparedPath = userAliase.path;
                 if (importPath.match(/^@.+?\//)) {

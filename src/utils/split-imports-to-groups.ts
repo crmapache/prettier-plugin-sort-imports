@@ -1,5 +1,5 @@
 import { Import, ImportData, ImportGroups, UserAlias } from '../types'
-import { extractImportPath } from './extract-import-path';
+import { extractImportPath } from './extract-import-path'
 
 const matchToUserAlias = (importSource: string, userAliases: UserAlias[]) => {
   for (const userAlias of userAliases) {
@@ -15,7 +15,10 @@ const isDireactAliasImport = (importSource: string, importString: string) => {
   return importSource.startsWith('@') && !importString.includes('from')
 }
 
-export const splitImportsIntoGroups = (imports: Import[], userAliases: UserAlias[]): ImportGroups => {
+export const splitImportsIntoGroups = (
+  imports: Import[],
+  userAliases: UserAlias[],
+): ImportGroups => {
   const libraries: ImportData[] = []
   const aliases: ImportData[] = []
   const relatives: ImportData[] = []

@@ -18,10 +18,10 @@ const getUserAliases = () => {
                 const aliasName = data[0];
                 const aliasPath = data[1][0];
                 const alias = aliasName.replace(/^@|\/\*$/g, '');
-                if (!aliasesData.find(el => el.name === alias)) {
+                if (!aliasesData.find((el) => el.name === alias)) {
                     aliasesData.push({
                         name: alias,
-                        path: aliasPath
+                        path: aliasPath,
                     });
                 }
             }

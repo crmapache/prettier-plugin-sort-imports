@@ -1,5 +1,5 @@
-import { UserAlias } from '../types';
-import { extractImportPath } from './extract-import-path';
+import { UserAlias } from '../types'
+import { extractImportPath } from './extract-import-path'
 
 export const simplifyImports = (imports: string[], userAliases: UserAlias[], filepath: string) => {
   const result = []
@@ -7,11 +7,11 @@ export const simplifyImports = (imports: string[], userAliases: UserAlias[], fil
   const targetFileFolderPath = `${rootFolderPath}/${filepath.replace(/\/([^/]+)$/, '')}`
 
   for (const rawImport of imports) {
-    const importPath = extractImportPath(rawImport)
+    const importPath = extractImportPath(rawImport).replace(/;$/, '')
 
     if (importPath.startsWith('@')) {
       const clearedPath = importPath.replace(/^@|\/.+$/g, '')
-      const userAliase = userAliases.find(userAliase => userAliase.name === clearedPath)
+      const userAliase = userAliases.find((userAliase) => userAliase.name === clearedPath)
 
       if (userAliase) {
         let preparedPath = userAliase.path
@@ -21,7 +21,6 @@ export const simplifyImports = (imports: string[], userAliases: UserAlias[], fil
         }
 
         const path = `${rootFolderPath}/src/${preparedPath}`
-
 
         if (path.includes(targetFileFolderPath)) {
           result.push(rawImport.replace(importPath, path.replace(targetFileFolderPath, '.')))
