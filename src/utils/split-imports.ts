@@ -16,7 +16,7 @@ export const splitImports = (rawImports: string) => {
   rawImportsData = rawImportsData.replace(multiLineRegExp, '')
   rawImportsData = rawImportsData.replace(/^\n/gm, '')
 
-  const imports = []
+  const imports: string[] = []
 
   if (singleLineImports && singleLineImports.length > 0) {
     for (const singleLineImport of singleLineImports) {

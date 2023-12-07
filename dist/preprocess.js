@@ -1,15 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.preprocess = void 0;
-var utils_1 = require("./utils");
-var extractors_1 = require("./extractors");
-var preprocess = function (code) {
-    var _a = (0, extractors_1.commonExtractor)(code), rawImports = _a.rawImports, codeWithoutImports = _a.codeWithoutImports;
+const utils_1 = require("./utils");
+const extractor_1 = require("./extractor");
+const preprocess = (code, { filepath }) => {
+    const userAliases = (0, utils_1.getUserAliases)();
+    const { rawImports, codeWithoutImports } = (0, extractor_1.extractor)(code);
     if (rawImports) {
-        var _b = (0, utils_1.splitImports)(rawImports), preImportsData = _b.preImportsData, imports = _b.imports;
-        var importGroups = (0, utils_1.splitImportsIntoGroups)(imports);
-        var sortedImportGroups = (0, utils_1.sortImportGroups)(importGroups);
-        var preparedImports = (0, utils_1.prepareImports)(sortedImportGroups);
+        const { preImportsData, imports } = (0, utils_1.splitImports)(rawImports);
+        const simplifyedImports = (0, utils_1.simplifyImports)(imports, userAliases, filepath);
+        const importGroups = (0, utils_1.splitImportsIntoGroups)(simplifyedImports, userAliases);
+        const sortedImportGroups = (0, utils_1.sortImportGroups)(importGroups);
+        const preparedImports = (0, utils_1.prepareImports)(sortedImportGroups);
         return (0, utils_1.prepareFinalCode)(preImportsData, preparedImports, codeWithoutImports);
     }
     return code;

@@ -1,19 +1,9 @@
-import config from '../config'
-import { Config, Import, ImportData, ImportGroups } from '../types'
+import { Import, ImportData, ImportGroups, UserAlias } from '../types'
+import { extractImportPath } from './extract-import-path';
 
-const extractImportPath = (importString: string): string => {
-  const matches = importString.match(/from.+/)
-
-  if (matches !== null) {
-    return matches[0].replace(/['"]/gm, '').replace('from', '').trim()
-  }
-
-  return importString.replace(/['"]/gm, '').replace('import', '').trim()
-}
-
-const matchToUserAlias = (importSource: string, aliases: Config['aliases']) => {
-  for (const alias of aliases) {
-    if (importSource.startsWith(`@${alias}`)) {
+const matchToUserAlias = (importSource: string, userAliases: UserAlias[]) => {
+  for (const userAlias of userAliases) {
+    if (importSource.startsWith(`@${userAlias.name}`)) {
       return true
     }
   }
@@ -25,34 +15,11 @@ const isDireactAliasImport = (importSource: string, importString: string) => {
   return importSource.startsWith('@') && !importString.includes('from')
 }
 
-const getUserAliases = () => {
-  const userAliases = config.aliases
-
-  if (config.getAliasesFromTsConfig) {
-    try {
-      const tsConfig = require('../../../../tsconfig.json')
-      const paths = tsConfig.compilerOptions.paths
-
-      if (paths) {
-        return Object.keys(paths).reduce((result, el) => {
-          const alias = el.replace(/^@|\/\*$/g, '')
-
-          if (result.includes(alias)) return result
-          return [...result, alias]
-        }, userAliases)
-      }
-    } catch (e) {}
-  }
-
-  return config.aliases
-}
-
-export const splitImportsIntoGroups = (imports: Import[]): ImportGroups => {
+export const splitImportsIntoGroups = (imports: Import[], userAliases: UserAlias[]): ImportGroups => {
   const libraries: ImportData[] = []
   const aliases: ImportData[] = []
   const relatives: ImportData[] = []
   const directRelatives: ImportData[] = []
-  const userAliases = getUserAliases()
 
   for (const importString of imports) {
     const importSource = extractImportPath(importString)

@@ -4,7 +4,7 @@
     "outDir": "./dist",
     "esModuleInterop": true,
     "module": "CommonJS",
-    "target": "ES5"
+    "target": "ES6"
   },
   "include": ["src"],
   "exclude": ["node_modules", "**/__tests__/*"]

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var config = {
+const config = {
     libs: [
         {
             name: 'react',
@@ -15,7 +15,7 @@ var config = {
     getAliasesFromTsConfig: true,
 };
 try {
-    var userConfig = require('../../../sort-plugin.config.js');
+    const userConfig = require('../../../sort-plugin.config.js');
     if (userConfig.libs) {
         config.libs = userConfig.libs;
     }

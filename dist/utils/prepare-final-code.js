@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.prepareFinalCode = void 0;
-var prepareFinalCode = function (preImportsData, preparedImports, codeWithoutImports) {
-    return "".concat(preImportsData, "\n").concat(preparedImports, "\n").concat(codeWithoutImports);
+const prepareFinalCode = (preImportsData, preparedImports, codeWithoutImports) => {
+    return `${preImportsData}\n${preparedImports}\n${codeWithoutImports}`;
 };
 exports.prepareFinalCode = prepareFinalCode;

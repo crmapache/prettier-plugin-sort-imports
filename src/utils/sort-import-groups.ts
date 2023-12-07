@@ -1,5 +1,6 @@
-import config from '../config'
-import { ImportData, ImportGroups, LibraryRule } from '../types'
+import { ImportData, ImportGroups } from '../types'
+
+const PRIORITIZED_LIBS = ['react', 'next']
 
 const getImportDepth = (path: string) => {
   return path.split('/').length
@@ -31,18 +32,14 @@ const sortLibraries = (imports: ImportData[]) => {
   let result: ImportData[] = []
   const groups = {}
 
-  for (const library of config.libs) {
-    groups[library.name] = []
+  for (const library of PRIORITIZED_LIBS) {
+    groups[library] = []
 
     for (let i = 0; i < imports.length; i++) {
       const importData = imports[i]
 
-      if (
-        (library.rule === LibraryRule.EXACT && importData.path === library.name) ||
-        (library.rule === LibraryRule.STARTS && importData.path.startsWith(library.name)) ||
-        (library.rule === LibraryRule.INCLUDES && importData.path.includes(library.name))
-      ) {
-        groups[library.name].push(importData)
+      if (importData.path.includes(library)) {
+        groups[library].push(importData)
         imports.splice(i, 1)
         i--
       }

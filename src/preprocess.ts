@@ -1,22 +1,29 @@
 import {
-  prepareImports,
-  sortImportGroups,
   splitImports,
-  splitImportsIntoGroups,
+  prepareImports,
+  getUserAliases,
+  simplifyImports,
+  sortImportGroups,
   prepareFinalCode,
+  splitImportsIntoGroups
 } from './utils'
 import { ImportGroups } from './types'
-import { commonExtractor } from './extractors'
+import { extractor } from './extractor'
 
-export const preprocess = (code: string) => {
-  const { rawImports, codeWithoutImports } = commonExtractor(code)
+export const preprocess = (code: string, { filepath }) => {
+  const userAliases = getUserAliases()
+
+  const { rawImports, codeWithoutImports } = extractor(code)
 
   if (rawImports) {
     const { preImportsData, imports } = splitImports(rawImports)
 
-    const importGroups: ImportGroups = splitImportsIntoGroups(imports)
+    const simplifyedImports = simplifyImports(imports, userAliases, filepath)
+
+    const importGroups: ImportGroups = splitImportsIntoGroups(simplifyedImports, userAliases)
     const sortedImportGroups = sortImportGroups(importGroups)
     const preparedImports = prepareImports(sortedImportGroups)
+
 
     return prepareFinalCode(preImportsData, preparedImports, codeWithoutImports)
   }

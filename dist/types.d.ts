@@ -5,18 +5,7 @@ export type ImportData = {
 };
 export type ImportGroup = 'libraries' | 'aliases' | 'relatives' | 'directRelatives';
 export type ImportGroups = Record<ImportGroup, ImportData[]>;
-export type LibraryRuleName = 'exact' | 'starts' | 'includes';
-export declare enum LibraryRule {
-    'EXACT' = "exact",
-    'STARTS' = "starts",
-    'INCLUDES' = "includes"
-}
-export type LibraryConfig = {
+export type UserAlias = {
     name: string;
-    rule: LibraryRuleName;
-};
-export type Config = {
-    libs?: LibraryConfig[];
-    aliases?: string[];
-    getAliasesFromTsConfig?: boolean;
+    path: string;
 };

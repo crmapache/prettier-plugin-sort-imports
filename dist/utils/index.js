@@ -19,3 +19,6 @@ __exportStar(require("./sort-import-groups"), exports);
 __exportStar(require("./prepare-imports"), exports);
 __exportStar(require("./split-imports"), exports);
 __exportStar(require("./prepare-final-code"), exports);
+__exportStar(require("./simplify-imports"), exports);
+__exportStar(require("./get-user-aliases"), exports);
+__exportStar(require("./extract-import-path"), exports);
