@@ -11,7 +11,7 @@ export const getUserAliases = (): UserAlias[] => {
     const cleredTsConfigString = tsConfigString.replace(/[\s\n]/gm, '').replace(',}', '}')
     const tsConfig = JSON.parse(cleredTsConfigString)
 
-    const paths = tsConfig.compilerOptions.paths
+    const paths = tsConfig.compilerOptions?.paths
 
     if (paths) {
       for (const data of Object.entries(paths)) {

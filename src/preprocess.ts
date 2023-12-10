@@ -2,7 +2,6 @@ import {
   splitImports,
   prepareImports,
   getUserAliases,
-  simplifyImports,
   sortImportGroups,
   prepareFinalCode,
   splitImportsIntoGroups,
@@ -10,7 +9,7 @@ import {
 import { ImportGroups } from './types'
 import { extractor } from './extractor'
 
-export const preprocess = (code: string, { filepath }) => {
+export const preprocess = (code: string) => {
   const userAliases = getUserAliases()
 
   const { rawImports, codeWithoutImports } = extractor(code)
@@ -18,9 +17,7 @@ export const preprocess = (code: string, { filepath }) => {
   if (rawImports) {
     const { preImportsData, imports } = splitImports(rawImports)
 
-    const simplifyedImports = simplifyImports(imports, userAliases, filepath)
-
-    const importGroups: ImportGroups = splitImportsIntoGroups(simplifyedImports, userAliases)
+    const importGroups: ImportGroups = splitImportsIntoGroups(imports, userAliases)
     const sortedImportGroups = sortImportGroups(importGroups)
     const preparedImports = prepareImports(sortedImportGroups)
 

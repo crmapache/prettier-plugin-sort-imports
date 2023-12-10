@@ -1,6 +1,6 @@
 # Prettier plugin sort react imports
 
-A prettier plugins for sorting and grouping your imports in react apps.
+A prettier plugin for sorting and grouping your imports in react apps.
 
 ### Input
 
