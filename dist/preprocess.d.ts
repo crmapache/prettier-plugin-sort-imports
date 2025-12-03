@@ -1,3 +1,1 @@
-export declare const preprocess: (code: string, { filepath }: {
-    filepath: any;
-}) => string;
+export declare const preprocess: (code: string) => string;

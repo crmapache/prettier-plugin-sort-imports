@@ -1,25 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.prepareImports = void 0;
+const joinGroup = (items) => items.map((x) => x.raw.trimEnd()).join('\n');
 const prepareImports = (importGroups) => {
-    let result = '';
-    for (const importData of importGroups.libraries) {
-        result += `${importData.raw}\n`;
-    }
-    result += '\n';
-    for (const importData of importGroups.aliases) {
-        result += `${importData.raw}\n`;
-    }
-    result += '\n';
-    for (const importData of importGroups.relatives) {
-        result += `${importData.raw}\n`;
-    }
-    if (importGroups.directRelatives.length > 0) {
-        result += '\n';
-        for (const importData of importGroups.directRelatives) {
-            result += `${importData.raw}\n`;
-        }
-    }
-    return result;
+    const parts = [];
+    if (importGroups.libraries.length)
+        parts.push(joinGroup(importGroups.libraries));
+    if (importGroups.aliases.length)
+        parts.push(joinGroup(importGroups.aliases));
+    if (importGroups.relatives.length)
+        parts.push(joinGroup(importGroups.relatives));
+    if (importGroups.directRelatives.length)
+        parts.push(joinGroup(importGroups.directRelatives));
+    return parts.join('\n\n');
 };
 exports.prepareImports = prepareImports;

@@ -21,7 +21,8 @@ export const preprocess = (code: string) => {
     const sortedImportGroups = sortImportGroups(importGroups)
     const preparedImports = prepareImports(sortedImportGroups)
 
-    return prepareFinalCode(preImportsData, preparedImports, codeWithoutImports)
+    const safeCodeWithoutImports = codeWithoutImports === code ? '' : codeWithoutImports
+    return prepareFinalCode(preImportsData, preparedImports, safeCodeWithoutImports)
   }
 
   return code

@@ -1,31 +1,14 @@
-import { ImportGroups } from '../types'
+import { ImportGroups, ImportData } from '../types'
+
+const joinGroup = (items: ImportData[]) => items.map((x) => x.raw.trimEnd()).join('\n')
 
 export const prepareImports = (importGroups: ImportGroups) => {
-  let result = ''
+  const parts: string[] = []
 
-  for (const importData of importGroups.libraries) {
-    result += `${importData.raw}\n`
-  }
+  if (importGroups.libraries.length) parts.push(joinGroup(importGroups.libraries))
+  if (importGroups.aliases.length) parts.push(joinGroup(importGroups.aliases))
+  if (importGroups.relatives.length) parts.push(joinGroup(importGroups.relatives))
+  if (importGroups.directRelatives.length) parts.push(joinGroup(importGroups.directRelatives))
 
-  result += '\n'
-
-  for (const importData of importGroups.aliases) {
-    result += `${importData.raw}\n`
-  }
-
-  result += '\n'
-
-  for (const importData of importGroups.relatives) {
-    result += `${importData.raw}\n`
-  }
-
-  if (importGroups.directRelatives.length > 0) {
-    result += '\n'
-
-    for (const importData of importGroups.directRelatives) {
-      result += `${importData.raw}\n`
-    }
-  }
-
-  return result
+  return parts.join('\n\n')
 }

@@ -25,6 +25,6 @@ export const extractor = (code: string) => {
 
   return {
     rawImports: imports.length ? imports.join('\n') : null,
-    codeWithoutImports: rest.length ? rest.join('\n') : code,
+    codeWithoutImports: rest.join('\n'),
   }
 }
