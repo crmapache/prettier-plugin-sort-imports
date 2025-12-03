@@ -6,13 +6,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUserAliases = void 0;
 const fs_1 = __importDefault(require("fs"));
 const getUserAliases = () => {
+    var _a;
     const aliasesData = [];
     try {
         const tsConfigBuffer = fs_1.default.readFileSync(`${process.cwd()}/tsconfig.json`);
         const tsConfigString = tsConfigBuffer.toString('utf8');
         const cleredTsConfigString = tsConfigString.replace(/[\s\n]/gm, '').replace(',}', '}');
         const tsConfig = JSON.parse(cleredTsConfigString);
-        const paths = tsConfig.compilerOptions.paths;
+        const paths = (_a = tsConfig.compilerOptions) === null || _a === void 0 ? void 0 : _a.paths;
         if (paths) {
             for (const data of Object.entries(paths)) {
                 const aliasName = data[0];
