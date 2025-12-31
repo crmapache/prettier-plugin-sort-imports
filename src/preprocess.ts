@@ -10,6 +10,10 @@ import { ImportGroups } from './types'
 import { extractor } from './extractor'
 
 export const preprocess = (code: string) => {
+  if (code.startsWith('// @sort-imports-ignore')) {
+    return code
+  }
+
   const userAliases = getUserAliases()
 
   const { rawImports, codeWithoutImports } = extractor(code)

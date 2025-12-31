@@ -93,5 +93,5 @@ module.exports = {
 In some special cases, the plugin may be doing something wrong, so you can
 turn it off in a specific file by leaving a comment
 ```
-// @imports-sort-ignore
+// @sort-imports-ignore
 ```
