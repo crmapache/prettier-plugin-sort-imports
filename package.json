@@ -1,6 +1,6 @@
 {
   "name": "prettier-plugin-sort-react-imports",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "A prettier plugins for sorting and grouping your imports in react apps",
   "main": "dist/index.js",
   "scripts": {
