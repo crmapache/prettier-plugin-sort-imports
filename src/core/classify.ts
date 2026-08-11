@@ -4,13 +4,6 @@ import type { ImportGroupId, ParsedImport, ResolvedOptions } from '../types'
 
 const BUILTINS = new Set(builtinModules)
 
-/**
- * Bare side-effect imports of these files are assets rather than polyfills, so
- * they belong at the bottom with `import './styles.css'`.
- */
-const ASSET_EXTENSION =
-  /\.(?:css|scss|sass|less|styl|stylus|pcss|postcss|svg|png|jpe?g|gif|webp|avif|ico|woff2?|ttf|eot|graphql|gql|wasm|md)$/i
-
 /** `@scope/pkg/deep/path` -> `@scope/pkg`, `lodash/debounce` -> `lodash`. */
 export function packageName(source: string): string {
   const parts = source.split('/')
@@ -48,8 +41,32 @@ function isBuiltin(source: string): boolean {
   return BUILTINS.has(source) || BUILTINS.has(packageName(source))
 }
 
+/** `@scope/pkg` -> `@scope`; null when the package is unscoped. */
+function scopeOf(source: string): string | null {
+  if (!source.startsWith('@')) return null
+  const slash = source.indexOf('/')
+  return slash > 0 ? source.slice(0, slash) : null
+}
+
+/**
+ * True when some package of the same scope is pinned.
+ *
+ * A scope is one family: pinning `@nestjs/common` while letting `@nestjs/swagger`
+ * fall into the scoped group split `@nestjs` across two blocks, so a controller
+ * ended up with a single import, a blank line, and one more import from the same
+ * scope. The whole family follows whichever group its pinned members are in.
+ */
+function hasPinnedScope(source: string, priorityPackages: string[]): boolean {
+  const scope = scopeOf(source)
+  if (!scope) return false
+  return priorityPackages.some((entry) => entry === scope || entry.startsWith(`${scope}/`))
+}
+
 /**
  * Picks the bucket for a single import.
+ *
+ * Side-effect imports never reach here: they keep their position instead of
+ * being grouped, which is what `core/segments` is for.
  *
  * Aliases win over builtins because a project may legitimately alias a name that
  * collides with a node module; `node:` prefixed specifiers can never be aliases
@@ -58,13 +75,6 @@ function isBuiltin(source: string): boolean {
 export function classify(entry: ParsedImport, options: ResolvedOptions): ImportGroupId {
   const { source } = entry
   const alias = matchesAlias(source, options.aliases)
-
-  if (entry.isSideEffect) {
-    // Bare package side effects are polyfills (`reflect-metadata`, `zone.js`)
-    // and must run first. Anything relative, aliased or asset-like is styling.
-    if (isRelative(source) || alias || ASSET_EXTENSION.test(source)) return 'side-effect'
-    return 'polyfill'
-  }
 
   if (source.startsWith('node:')) return 'builtin'
   if (alias) return 'alias'
@@ -75,9 +85,16 @@ export function classify(entry: ParsedImport, options: ResolvedOptions): ImportG
 
   // A pinned package stays with the libraries even when scoped, otherwise the
   // scoped group would swallow `@nestjs/common` and `@angular/core` and undo
-  // the very ordering the preset exists to provide.
+  // the very ordering the preset exists to provide. Its scope siblings come
+  // along, so one family is never split across two blocks.
   const isPinned = priorityRank(source, options.priorityPackages) < options.priorityPackages.length
-  if (options.groupScoped && !isPinned && source.startsWith('@') && source.includes('/')) {
+  if (
+    options.groupScoped &&
+    !isPinned &&
+    !hasPinnedScope(source, options.priorityPackages) &&
+    source.startsWith('@') &&
+    source.includes('/')
+  ) {
     return 'scoped'
   }
 

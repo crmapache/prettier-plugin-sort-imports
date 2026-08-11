@@ -38,10 +38,6 @@ function byDepthDesc(a: ParsedImport, b: ParsedImport): number {
   return diff !== 0 ? diff : a.source.localeCompare(b.source)
 }
 
-function byOriginalOrder(a: ParsedImport, b: ParsedImport): number {
-  return a.index - b.index
-}
-
 function bySource(a: ParsedImport, b: ParsedImport): number {
   return a.source.localeCompare(b.source)
 }
@@ -85,11 +81,6 @@ export function sortGroup(
       return sortRelatives(imports)
     case 'builtin':
       return imports.slice().sort(bySource)
-    // Side-effect imports run for their side effects alone, so their relative
-    // order is part of the program's behaviour and is never rearranged.
-    case 'polyfill':
-    case 'side-effect':
-      return imports.slice().sort(byOriginalOrder)
     default:
       return imports.slice()
   }

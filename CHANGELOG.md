@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.0.0
+
+### Breaking
+
+- **Side-effect imports are no longer moved.** `import './styles.css'`, `import 'reflect-metadata'` and `import './setup/dayjs'` exist only to run code, so where they sit decides which stylesheet wins the cascade and whether a setup module runs before its dependants. Nothing in the import itself says which of the two it is, so the plugin now leaves them alone: they act as boundaries, and the imports around them are sorted in the runs they define. This is what `eslint-plugin-simple-import-sort` and `@ianvs/prettier-plugin-sort-imports` do, and for the same reason.
+
+  Previously a bare package import was hoisted to a `polyfill` group at the top while anything relative, aliased or asset-like was sunk to a `side-effect` group at the bottom. That guess was wrong in both directions. `import './common/setup/dayjs'` ended up below `./app.module`, so the library was used before it was configured, and a library stylesheet ended up below the components that override it. Both are silent: the code still compiles, still passes tests, and only shows up in the browser or in production.
+
+  Upgrading moves nothing that 1.x had already placed, so a formatted repository stays formatted. Files not yet touched by 1.x keep their side-effect imports where the author wrote them.
+
+- **The `polyfill` and `side-effect` group ids are gone.** Side-effect imports belong to no group now. Listing either id in `sortImportsGroups` is ignored rather than an error, so existing configuration keeps working.
+
+### Fixed
+
+- **A package scope is no longer split across two groups.** With the NestJS preset, `@nestjs/common` was pinned into the library group while `@nestjs/swagger` and `@nestjs/event-emitter` fell into the scoped group, so controllers ended up with a single import, a blank line, and one more import from the same `@nestjs`. A scope is one family: pinning any package in it now keeps the whole scope with the libraries. The same applies to `@angular` and to any scope you pin yourself.
+
 ## 1.2.0
 
 ### Fixed

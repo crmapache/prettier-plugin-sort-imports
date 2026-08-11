@@ -30,6 +30,9 @@ const CORPUS: Record<string, string> = {
   namespace: "import * as path from 'path'\nimport { readFile } from 'fs'\n\nexport default [path, readFile]\n",
   sideEffects:
     "import 'reflect-metadata'\nimport './styles.css'\nimport a from 'a'\n\nexport default a\n",
+  sideEffectInTheMiddle:
+    "import z from 'zzz'\nimport './setup/dayjs'\nimport a from './a'\n\nexport default [z, a]\n",
+  onlySideEffects: "import './a.css'\nimport './b.css'\n",
   useClient: "'use client'\n\nimport z from 'zzz'\nimport a from './a'\n\nexport default [z, a]\n",
   shebang: "#!/usr/bin/env node\nimport z from 'zzz'\nimport a from './a'\n\nexport default [z, a]\n",
   licenseHeader:

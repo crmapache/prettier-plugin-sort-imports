@@ -52,13 +52,18 @@ npm install --save-dev prettier-plugin-auto-sort-imports
 
 That is the whole setup. Everything below is optional.
 
+## Live playground
+
+Try the interactive demo at [prettier-plugin-sort-imports.vercel.app](https://prettier-plugin-sort-imports.vercel.app). Pick a preset, hit **Format**, and see the imports reorder instantly.
+
+![Demo](docs/demo.gif)
+
 ## Example
 
 ### Input
 
 ```javascript
 import Fuse from 'fuse.js'
-import './styles.scss'
 import { BlackTransparentMask } from '../../SharedPageMask'
 import { ACCORDEON_DATA, TAB_OPTIONS } from './Faq.constants'
 import emptySearchResultSadFace from '@assets/svg/empty-search-result.svg'
@@ -67,6 +72,7 @@ import { BackdropWrap, Backdrop } from '../FrontBackdrop'
 import { SearchInput, Tabs, Accordeon, Typography, Box } from '@core'
 import debounce from 'lodash/debounce'
 import { useMemo, useState } from 'react'
+import './styles.scss'
 ```
 
 ### Output
@@ -91,20 +97,37 @@ import './styles.scss'
 
 Imports are placed into these groups, in this order:
 
-| Group         | What lands there                                                     |
-| ------------- | -------------------------------------------------------------------- |
-| `polyfill`    | Bare side-effect imports such as `reflect-metadata` or `zone.js`      |
-| `builtin`     | Node builtins: `node:fs`, `path`, `crypto`                            |
-| `library`     | Unscoped npm packages, plus any package you pinned as a priority      |
-| `scoped`      | Scoped npm packages such as `@mui/material`                           |
-| `workspace`   | Packages from your own monorepo                                       |
-| `alias`       | Your own path aliases from tsconfig/jsconfig                          |
-| `relative`    | `./foo`, `../bar`                                                     |
-| `side-effect` | Style and asset imports such as `import './styles.css'`               |
+| Group       | What lands there                                                 |
+| ----------- | ---------------------------------------------------------------- |
+| `builtin`   | Node builtins: `node:fs`, `path`, `crypto`                        |
+| `library`   | Unscoped npm packages, plus any package you pinned as a priority  |
+| `scoped`    | Scoped npm packages such as `@mui/material`                       |
+| `workspace` | Packages from your own monorepo                                   |
+| `alias`     | Your own path aliases from tsconfig/jsconfig                      |
+| `relative`  | `./foo`, `../bar`                                                 |
 
 Within a group, packages are ordered by depth and then alphabetically. Depth is measured from the package name, so `@mui/material` ranks alongside `axios` rather than alongside `lodash/debounce` - a scope is part of the name, not a folder level. Relative paths count every slash, so `../../deep` comes before `../shallow`.
 
-Side-effect imports are never reordered relative to one another, because their order is part of how your program runs.
+A scope is one family, so it is never split in two. Pinning `@nestjs/common` as a priority package brings `@nestjs/swagger` and the rest of `@nestjs` into the library group with it, instead of leaving them behind in the scoped group.
+
+## Side-effect imports stay where you put them
+
+`import './styles.css'`, `import 'reflect-metadata'`, `import './setup/dayjs'` - an import with no bindings exists only to run code, so its position is part of how your program behaves. A stylesheet loaded later wins the cascade; a setup module has to run before whatever depends on it. Nothing about the import itself says which, so the plugin never moves them.
+
+They act as boundaries instead, and the imports around them are sorted in the runs they define:
+
+```javascript
+import { DayPicker } from 'react-day-picker'
+
+// stays above the components, so their styles still win
+import 'react-day-picker/style.css'
+
+import { cn } from '@/lib/utils'
+
+import { Wrapper } from './Wrapper'
+```
+
+In practice you write these at the top or the bottom of the block anyway, and there they stay - which is why the example above puts `./styles.scss` last.
 
 ## Monorepos
 

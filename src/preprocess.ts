@@ -1,11 +1,22 @@
 import { groupImports } from './core/classify'
 import { hasIgnorePragma } from './core/ignore'
 import { isParseable, parseImports } from './core/parse-imports'
-import { assemble, printGroups } from './core/print'
+import { assemble, printGroups, printImport } from './core/print'
+import { splitOnSideEffects } from './core/segments'
 import { sortGroup } from './core/sort'
 import { canRemoveUnused, findUnusedBindings, pruneImport } from './core/unused'
 import { getFilePath, resolveOptions } from './options'
-import type { ImportGroupId, ParsedImport } from './types'
+import type { ImportGroupId, ParsedImport, ResolvedOptions } from './types'
+
+/** Groups, sorts and renders one run of ordinary imports. */
+function printSortable(entries: ParsedImport[], options: ResolvedOptions): string {
+  const grouped = groupImports(entries, options)
+
+  const sorted = new Map<ImportGroupId, ParsedImport[]>()
+  for (const [id, groupEntries] of grouped) sorted.set(id, sortGroup(id, groupEntries, options))
+
+  return printGroups(sorted, options.groups, options)
+}
 
 /**
  * Sorts the leading import block of a source file.
@@ -44,12 +55,16 @@ export function sortImports(code: string, rawOptions?: unknown): string {
       return head ? `${head}\n\n${rest}` : rest
     }
 
-    const grouped = groupImports(entries, options)
+    // Side-effect imports stay where the author put them and split the block
+    // into runs; only those runs are sorted.
+    const printed = splitOnSideEffects(entries)
+      .map((segment) =>
+        segment.anchored
+          ? segment.imports.map((entry) => printImport(entry, options)).join('\n')
+          : printSortable(segment.imports, options),
+      )
+      .join(options.separator ? '\n\n' : '\n')
 
-    const sorted = new Map<ImportGroupId, ParsedImport[]>()
-    for (const [id, groupEntries] of grouped) sorted.set(id, sortGroup(id, groupEntries, options))
-
-    const printed = printGroups(sorted, options.groups, options)
     if (printed.trim() === '') return code
 
     const result = assemble(block.header, printed, block.tail)

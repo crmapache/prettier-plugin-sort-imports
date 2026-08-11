@@ -58,11 +58,14 @@ describe('high: wrong output and broken tooling', () => {
     expect(out.indexOf("'alpha'")).toBeLessThan(out.indexOf("'zeta'"))
   })
 
-  it('bug 5b: sorts a side-effect import written with a semicolon', () => {
-    const code = "import './s.css';\nimport zeta from 'zeta';\n\nexport const x = 1;\n"
+  it('bug 5b: reads a side-effect import written with a semicolon', () => {
+    const code = "import './s.css';\nimport zeta from 'zeta';\nimport alpha from 'alpha';\n\nexport const x = 1;\n"
     const out = react(code)
 
-    expect(out.indexOf("'zeta'")).toBeLessThan(out.indexOf("'./s.css'"))
+    // The side-effect import anchors the block, the rest sorts below it.
+    expect(out).toBe(
+      "import './s.css';\n\nimport alpha from 'alpha';\nimport zeta from 'zeta';\n\nexport const x = 1;\n",
+    )
   })
 
   it('bug 6: never hoists an export-from above the imports', () => {
@@ -179,13 +182,13 @@ describe('behaviour preserved from the previous engine', () => {
   it('keeps the documented grouping and ordering', () => {
     const input = [
       "import Fuse from 'fuse.js'",
-      "import './styles.scss'",
       "import { BlackTransparentMask } from '../../SharedPageMask'",
       "import emptyFace from '@core/svg/face.svg'",
       "import Image from 'next/image'",
       "import { ShowAllButtonBackground } from './ShowAllButtonBackground'",
       "import debounce from 'lodash/debounce'",
       "import { useMemo, useState } from 'react'",
+      "import './styles.scss'",
       '',
       'export default null',
       '',
@@ -228,11 +231,11 @@ describe('behaviour preserved from the previous engine', () => {
 describe('backend and framework coverage', () => {
   const nest = (code: string) => sortImports(code, { filepath: NEST_FILE, parser: 'typescript' })
 
-  it('puts a bare side-effect polyfill first and node builtins next', () => {
+  it('keeps a bare polyfill on top and sorts the builtins below it', () => {
     const code = [
+      "import 'reflect-metadata'",
       "import { Injectable } from '@nestjs/common'",
       "import path from 'path'",
-      "import 'reflect-metadata'",
       "import fs from 'node:fs'",
       '',
       '@Injectable()',
@@ -330,6 +333,44 @@ describe('scoped packages and package depth', () => {
     expect(out.indexOf('@nestjs/common')).toBeLessThan(out.indexOf('typeorm'))
   })
 
+  it('a scope is never split across two groups', () => {
+    // `@nestjs/common` is pinned and `@nestjs/swagger` is not, which used to put
+    // one import, a blank line, and one more import from the same scope into
+    // every controller.
+    const code = [
+      "import { ApiTags } from '@nestjs/swagger'",
+      "import { Repository } from 'typeorm'",
+      "import { Injectable } from '@nestjs/common'",
+      '',
+      'export class A {}',
+      '',
+    ].join('\n')
+
+    expect(sortImports(code, { filepath: NEST_FILE, parser: 'typescript' })).toBe(
+      [
+        "import { Injectable } from '@nestjs/common'",
+        "import { Repository } from 'typeorm'",
+        "import { ApiTags } from '@nestjs/swagger'",
+        '',
+        'export class A {}',
+        '',
+      ].join('\n'),
+    )
+  })
+
+  it('an unrelated scope still gets its own group', () => {
+    const code = [
+      "import { Injectable } from '@nestjs/common'",
+      "import { Button } from '@mui/material'",
+      '',
+      'export class A {}',
+      '',
+    ].join('\n')
+    const out = sortImports(code, { filepath: NEST_FILE, parser: 'typescript' })
+
+    expect(out).toContain("import { Injectable } from '@nestjs/common'\n\nimport { Button } from '@mui/material'")
+  })
+
   it('sortImportsGroupScoped: false keeps them among the libraries', () => {
     const code =
       "import { Button } from '@mui/material'\nimport axios from 'axios'\n\nexport default [Button, axios]\n"
@@ -352,6 +393,101 @@ describe('scoped packages and package depth', () => {
 
     expect(out.indexOf('../../deep/nested/thing')).toBeLessThan(out.indexOf("'../b'"))
     expect(out.indexOf("'../b'")).toBeLessThan(out.indexOf("'./a'"))
+  })
+})
+
+describe('side-effect imports keep their position', () => {
+  const nest = (code: string) => sortImports(code, { filepath: NEST_FILE, parser: 'typescript' })
+
+  it('does not sink a relative setup import below the modules that need it', () => {
+    // The bug: `import './setup/dayjs'` was classified as styling and moved to
+    // the bottom, so the library it configures loaded before the configuration.
+    const code = [
+      "import './common/setup/dayjs'",
+      "import { AppModule } from './app.module'",
+      "import { NestFactory } from '@nestjs/core'",
+      '',
+      'export default AppModule',
+      '',
+    ].join('\n')
+
+    expect(nest(code)).toBe(
+      [
+        "import './common/setup/dayjs'",
+        '',
+        "import { NestFactory } from '@nestjs/core'",
+        '',
+        "import { AppModule } from './app.module'",
+        '',
+        'export default AppModule',
+        '',
+      ].join('\n'),
+    )
+  })
+
+  it('does not move a stylesheet past the components around it', () => {
+    // Moving it down would let the component styles load first and lose the
+    // cascade, which is invisible until something renders wrong.
+    const code = [
+      "import { DayPicker } from 'react-day-picker'",
+      "import 'react-day-picker/style.css'",
+      "import { Wrapper } from './Wrapper'",
+      '',
+      'export default [DayPicker, Wrapper]',
+      '',
+    ].join('\n')
+
+    expect(react(code)).toBe(
+      [
+        "import { DayPicker } from 'react-day-picker'",
+        '',
+        "import 'react-day-picker/style.css'",
+        '',
+        "import { Wrapper } from './Wrapper'",
+        '',
+        'export default [DayPicker, Wrapper]',
+        '',
+      ].join('\n'),
+    )
+  })
+
+  it('keeps a run of side-effect imports together and in order', () => {
+    const code = [
+      "import './z.css'",
+      "import './a.css'",
+      "import zeta from 'zeta'",
+      '',
+      'export default zeta',
+      '',
+    ].join('\n')
+
+    expect(react(code)).toBe(
+      [
+        "import './z.css'",
+        "import './a.css'",
+        '',
+        "import zeta from 'zeta'",
+        '',
+        'export default zeta',
+        '',
+      ].join('\n'),
+    )
+  })
+
+  it('carries the comment that explains a side-effect import with it', () => {
+    const code = [
+      "import { DayPicker } from 'react-day-picker'",
+      '// the calendar is useless without its own styles',
+      "import 'react-day-picker/style.css'",
+      '',
+      'export default DayPicker',
+      '',
+    ].join('\n')
+    const out = react(code)
+
+    expect(out).toContain(
+      "// the calendar is useless without its own styles\nimport 'react-day-picker/style.css'",
+    )
   })
 })
 

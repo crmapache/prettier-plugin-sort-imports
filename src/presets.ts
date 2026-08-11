@@ -5,8 +5,11 @@ export interface Preset {
   priorityPackages: string[]
 }
 
+/**
+ * Side-effect imports are absent on purpose: they are never moved, so they
+ * belong to no group. See `core/segments`.
+ */
 export const DEFAULT_GROUPS: ImportGroupId[] = [
-  'polyfill',
   'builtin',
   'library',
   // Scoped registry packages read as a set - a design system, a query library,
@@ -19,7 +22,6 @@ export const DEFAULT_GROUPS: ImportGroupId[] = [
   'workspace',
   'alias',
   'relative',
-  'side-effect',
 ]
 
 export const PRESETS: Record<Exclude<PresetName, 'auto'>, Preset> = {

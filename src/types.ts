@@ -3,14 +3,12 @@
  * documentation only - the effective order comes from `ResolvedOptions.groups`.
  */
 export type ImportGroupId =
-  | 'polyfill'
   | 'builtin'
   | 'library'
   | 'scoped'
   | 'workspace'
   | 'alias'
   | 'relative'
-  | 'side-effect'
 
 export type SpecifierOrder = 'length' | 'alphabetical' | 'none'
 
