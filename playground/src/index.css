@@ -1,0 +1,61 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: #09080d;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+a {
+  color: #b48cff;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #d4bcff;
+}
+
+::selection {
+  background: rgba(134, 59, 255, 0.35);
+}
+
+textarea,
+select,
+button {
+  font: inherit;
+}
+
+textarea::placeholder {
+  color: #4f4a5f;
+}
+
+.pane::-webkit-scrollbar,
+textarea::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.pane::-webkit-scrollbar-thumb,
+textarea::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+.pane::-webkit-scrollbar-track,
+textarea::-webkit-scrollbar-track {
+  background: transparent;
+}

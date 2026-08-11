@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd playground && npm install && npm run build",
+  "outputDirectory": "playground/dist",
+  "devCommand": "cd playground && npm run dev",
+  "framework": "vite",
+  "installCommand": "npm install --include=dev"
+}
