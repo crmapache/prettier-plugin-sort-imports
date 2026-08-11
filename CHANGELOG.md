@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.0
+
+### Breaking
+
+- **Relative imports are sorted shallow first.** `../b` now comes before `../../deep/nested/thing`, and the same applies inside the `./` run. Every other group already ordered its imports from shallow to deep - libraries, workspace packages, aliases - and relative paths were the one exception, kept that way only because the first version happened to do it. A block of imports that gets shorter as it goes down reads as an accident next to three groups that get longer. Imports still leave the current folder before they address it, so `../` comes before `./`.
+
+  Nothing else changes: the grouping, the blank lines and the specifier order are the same. Reformatting a project reorders the relative block of any file that has more than one depth in it.
+
 ## 2.0.0
 
 ### Breaking

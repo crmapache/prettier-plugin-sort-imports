@@ -380,7 +380,7 @@ describe('scoped packages and package depth', () => {
     )
   })
 
-  it('relative imports still count every slash', () => {
+  it('relative imports count every slash, shallow ones first', () => {
     const code = [
       "import { a } from './a'",
       "import { deep } from '../../deep/nested/thing'",
@@ -391,8 +391,8 @@ describe('scoped packages and package depth', () => {
     ].join('\n')
     const out = react(code)
 
-    expect(out.indexOf('../../deep/nested/thing')).toBeLessThan(out.indexOf("'../b'"))
-    expect(out.indexOf("'../b'")).toBeLessThan(out.indexOf("'./a'"))
+    expect(out.indexOf("'../b'")).toBeLessThan(out.indexOf('../../deep/nested/thing'))
+    expect(out.indexOf('../../deep/nested/thing')).toBeLessThan(out.indexOf("'./a'"))
   })
 })
 

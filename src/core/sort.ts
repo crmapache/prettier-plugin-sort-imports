@@ -32,12 +32,6 @@ function byPackageDepthAsc(a: ParsedImport, b: ParsedImport): number {
   return diff !== 0 ? diff : a.source.localeCompare(b.source)
 }
 
-/** Deep paths first, then alphabetical - the historical order for relatives. */
-function byDepthDesc(a: ParsedImport, b: ParsedImport): number {
-  const diff = segmentDepth(b.source) - segmentDepth(a.source)
-  return diff !== 0 ? diff : a.source.localeCompare(b.source)
-}
-
 function bySource(a: ParsedImport, b: ParsedImport): number {
   return a.source.localeCompare(b.source)
 }
@@ -51,7 +45,11 @@ function sortLibraries(imports: ParsedImport[], options: ResolvedOptions): Parse
   })
 }
 
-/** Imports reaching out of the current folder come before local ones. */
+/**
+ * Imports reaching out of the current folder come before local ones, and within
+ * each of those the shallow paths come first - the same direction every other
+ * group is sorted in.
+ */
 function sortRelatives(imports: ParsedImport[]): ParsedImport[] {
   const outer: ParsedImport[] = []
   const current: ParsedImport[] = []
@@ -59,7 +57,7 @@ function sortRelatives(imports: ParsedImport[]): ParsedImport[] {
     if (entry.source.startsWith('./')) current.push(entry)
     else outer.push(entry)
   }
-  return [...outer.sort(byDepthDesc), ...current.sort(byDepthDesc)]
+  return [...outer.sort(byDepthAsc), ...current.sort(byDepthAsc)]
 }
 
 export function sortGroup(

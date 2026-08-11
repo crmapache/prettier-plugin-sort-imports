@@ -91,8 +91,8 @@ import debounce from 'lodash/debounce'
 import { Box, Tabs, Accordeon, Typography, SearchInput } from '@core'
 import emptySearchResultSadFace from '@assets/svg/empty-search-result.svg'
 
-import { BlackTransparentMask } from '../../SharedPageMask'
 import { Backdrop, BackdropWrap } from '../FrontBackdrop'
+import { BlackTransparentMask } from '../../SharedPageMask'
 import { TAB_OPTIONS, ACCORDEON_DATA } from './Faq.constants'
 
 import './styles.scss'
@@ -111,7 +111,7 @@ Imports are placed into these groups, in this order:
 | `alias`     | Your own path aliases from tsconfig/jsconfig                      |
 | `relative`  | `./foo`, `../bar`                                                 |
 
-Within a group, packages are ordered by depth and then alphabetically. Depth is measured from the package name, so `@mui/material` ranks alongside `axios` rather than alongside `lodash/debounce` - a scope is part of the name, not a folder level. Relative paths count every slash, so `../../deep` comes before `../shallow`.
+Within a group, packages are ordered by depth and then alphabetically. Depth is measured from the package name, so `@mui/material` ranks alongside `axios` rather than alongside `lodash/debounce` - a scope is part of the name, not a folder level. Relative paths count every slash, so `../shallow` comes before `../../deep`.
 
 A scope is one family, so it is never split in two. Pinning `@nestjs/common` as a priority package brings `@nestjs/swagger` and the rest of `@nestjs` into the library group with it, instead of leaving them behind in the scoped group.
 
