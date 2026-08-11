@@ -4,10 +4,13 @@
 [![npm downloads](https://img.shields.io/npm/dm/prettier-plugin-auto-sort-imports.svg)](https://www.npmjs.com/package/prettier-plugin-auto-sort-imports)
 [![CI](https://github.com/crmapache/prettier-plugin-auto-sort-imports/actions/workflows/ci.yml/badge.svg)](https://github.com/crmapache/prettier-plugin-auto-sort-imports/actions/workflows/ci.yml)
 [![license](https://img.shields.io/npm/l/prettier-plugin-auto-sort-imports.svg)](./LICENSE)
+[![playground](https://img.shields.io/badge/playground-live-863bff)](https://prettier-plugin-sort-imports.vercel.app)
 
 Sorts and groups your imports, with blank lines between groups, **without asking you to write a single regular expression**.
 
 It reads your `tsconfig.json` / `jsconfig.json` and works out which imports are your own path aliases, which are npm packages, which are Node builtins and which are relative. Install it, and it does the right thing.
+
+**[Try it in the playground →](https://prettier-plugin-sort-imports.vercel.app)** Paste your own file, pick a preset, and see what this plugin would do to it.
 
 ## Why another one
 
@@ -54,9 +57,11 @@ That is the whole setup. Everything below is optional.
 
 ## Live playground
 
-Try the interactive demo at [prettier-plugin-sort-imports.vercel.app](https://prettier-plugin-sort-imports.vercel.app). Pick a preset, hit **Format**, and see the imports reorder instantly.
+[prettier-plugin-sort-imports.vercel.app](https://prettier-plugin-sort-imports.vercel.app) runs this plugin on a server and formats as you type. Pick one of the nine framework presets, edit the sample or paste your own file, and flip the options to see what each one changes.
 
-![Demo](docs/demo.gif)
+Nothing there is a simulation: the page sends your code to the published package and prints what comes back.
+
+[![The playground, with a React file sorted into groups](docs/playground.png)](https://prettier-plugin-sort-imports.vercel.app)
 
 ## Example
 
